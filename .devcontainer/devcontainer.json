@@ -23,6 +23,9 @@
       ]
     }
   },
-  "postCreateCommand": "git submodule update --init --recursive --depth 1",
+  "postCreateCommand": {
+    "opam": "sudo .devcontainer/fix-opam-owner.sh $(id -u) $(id -g)",
+    "submodules": "git submodule update --init --recursive --depth 1"
+  },
   "waitFor": "postCreateCommand"
 }
