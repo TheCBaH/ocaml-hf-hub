@@ -8,7 +8,18 @@ let main () =
   let request_handler _ reqd =
     let request = H2.Reqd.request reqd in
     H2.Body.Reader.close (H2.Reqd.request_body reqd);
-    if request.H2.Request.target <> "/slow" then
+    if request.H2.Request.target = "/abort-body" then (
+      let response =
+        H2.Response.create
+          ~headers:(H2.Headers.of_list [ ("content-length", "5") ])
+          `OK
+      in
+      let body = H2.Reqd.respond_with_streaming reqd response in
+      H2.Body.Writer.write_string body "he";
+      don't_wait_for
+        (let+ () = Clock.after (Core.Time_float.Span.of_sec 0.01) in
+         H2.Reqd.report_exn reqd (Failure "aborted response")))
+    else if request.H2.Request.target <> "/slow" then
       let status, headers, body =
         Transport_cases.response ~endpoint:!endpoint request.meth request.target
           (H2.Headers.to_list request.headers)
@@ -49,6 +60,20 @@ let main () =
             let+ response = http request in
             check response)
       in
+      let request =
+        Hf_hub.Request.Get
+          {
+            url = !endpoint ^ "/abort-body";
+            headers = [];
+            resume_from = 0L;
+            sink = { repo = Transport_cases.repo; etag = Transport_cases.etag };
+          }
+      in
+      Hf_hub_unix.prepare_http env request;
+      let* aborted = http request in
+      (match aborted with
+      | Hf_hub.Response.Transport_error _ -> ()
+      | _ -> failwith "stream reset was ignored");
       let* result =
         Hf_hub_async.download ~env ~repo:Transport_cases.repo ~filename:"file"
           ()

@@ -46,6 +46,14 @@ let check_range headers offset =
 
 let request uri meth headers consume ~interrupt =
   check_uri uri;
+  let stopped = Ivar.create () in
+  let interrupt =
+    Deferred.choose
+      [
+        Deferred.choice interrupt (fun () -> ());
+        Deferred.choice (Ivar.read stopped) (fun () -> ());
+      ]
+  in
   let host = Option.get (Uri.host uri) in
   let _, _, port = origin uri in
   let where =
@@ -56,10 +64,15 @@ let request uri meth headers consume ~interrupt =
   let close_channels = ref (fun () -> Deferred.unit) in
   let result = Ivar.create () in
   let finish value = Ivar.fill_if_empty result value in
-  let error_handler error = finish (Error (error_message error)) in
+  let error_handler error =
+    Ivar.fill_if_empty stopped ();
+    finish (Error (error_message error))
+  in
   let response_handler response body =
     don't_wait_for
-      (let+ outcome = Monitor.try_with (fun () -> consume response body) in
+      (let+ outcome =
+         Monitor.try_with (fun () -> consume response body ~interrupt)
+       in
        finish
          (match outcome with
          | Ok value -> Ok value
@@ -155,16 +168,22 @@ let request uri meth headers consume ~interrupt =
           Deferred.choice interrupt (fun () -> Error "HTTP request timed out");
         ])
     ~finally:(fun () ->
+      Ivar.fill_if_empty stopped ();
       let* () = !close_channels () in
       Fd.close (Socket.fd socket))
 
-let stream ~interrupt output body =
+let stream ~interrupt ~length output body =
   let complete = Ivar.create () in
+  let written = ref 0L in
   let rec read () =
     H2.Body.Reader.schedule_read body
-      ~on_eof:(fun () -> Ivar.fill_if_empty complete (Ok ()))
+      ~on_eof:(fun () ->
+        Ivar.fill_if_empty complete
+          (if Option.fold ~none:true ~some:(( = ) !written) length then Ok ()
+           else Error (Failure "incomplete HTTP/2 response body")))
       ~on_read:(fun buffer ~off ~len ->
         let chunk = Bigstringaf.substring buffer ~off ~len in
+        written := Int64.add !written (Int64.of_int len);
         don't_wait_for
           (let+ outcome =
              Monitor.try_with (fun () ->
@@ -195,7 +214,7 @@ let h2 ?(timeout = 60.) ?(max_redirects = 10) env : http =
     let interrupt = Clock.after (Core.Time_float.Span.of_sec timeout) in
     let rec get remaining headers uri sink offset =
       let* result =
-        request uri `GET headers ~interrupt (fun response body ->
+        request uri `GET headers ~interrupt (fun response body ~interrupt ->
             let status = H2.Status.to_code response.H2.Response.status in
             if List.mem status [ 301; 302; 303; 307; 308 ] then (
               H2.Body.Reader.close body;
@@ -217,10 +236,14 @@ let h2 ?(timeout = 60.) ?(max_redirects = 10) env : http =
                       && (Unix_sys.LargeFile.stat path).st_size <> offset
                     then failwith "partial blob size changed before resume")
               in
+              let length =
+                Option.map Int64.of_string
+                  (H2.Headers.get response.headers "content-length")
+              in
               let* output = Writer.open_file ~append:(offset > 0L) path in
               let+ () =
                 Monitor.protect
-                  (fun () -> stream ~interrupt output body)
+                  (fun () -> stream ~interrupt ~length output body)
                   ~finally:(fun () -> Writer.close output)
               in
               `Received
@@ -277,7 +300,7 @@ let h2 ?(timeout = 60.) ?(max_redirects = 10) env : http =
           | Request.Head { url; headers } -> (
               let+ result =
                 request (Uri.of_string url) `HEAD headers ~interrupt
-                  (fun response body ->
+                  (fun response body ~interrupt:_ ->
                     H2.Body.Reader.close body;
                     return
                       {
