@@ -21,4 +21,4 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Smoke test
-        run: ${{ steps.container.outputs.exec }} make build
+        run: ${{ steps.container.outputs.exec }} make build build.javascript

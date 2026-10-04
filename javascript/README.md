@@ -20,6 +20,12 @@ make build.javascript
 make test.javascript
 ```
 
+The repo's devcontainer installs Node.js/npm and both OCaml JavaScript
+compilers, and its post-create hook installs the locked npm dependencies.
+Rebuild an existing container to pick up these toolchain changes. CI runs
+`test.javascript` inside the devcontainer for each supported OCaml version;
+the published image's smoke test also builds the JavaScript examples.
+
 All OCaml tooling is run through `opam exec`. The build creates
 `_build/default/javascript/jsoo/main.bc.js` and the Melange output directory,
 then bundles browser assets into `javascript/dist/`. The npm dependency is
