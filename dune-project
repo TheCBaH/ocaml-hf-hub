@@ -13,11 +13,11 @@
 (package
  (name hf-hub-unix)
  (synopsis "Blocking Unix driver for hf-hub: curl transport, on-disk cache, CLI")
- (depends (ocaml (>= 4.14)) dune cmdliner (hf-hub (= :version))))
+ (depends (ocaml (>= 4.14)) dune cmdliner (ppx_expect :with-test) (hf-hub (= :version))))
 (package
  (name hf-hub-safetensors)
  (synopsis "Open a Hub safetensors checkpoint as a read-only mmap")
- (depends (ocaml (>= 4.14)) dune (hf-hub-unix (= :version)) safetensors-unix))
+ (depends (ocaml (>= 4.14)) dune (ppx_expect :with-test) (hf-hub-unix (= :version)) safetensors-unix))
 (package
  (name hf-hub-lwt)
  (synopsis "Lwt Hub driver using Cohttp and native OCaml TLS")

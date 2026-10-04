@@ -9,6 +9,7 @@ bug-reports: "https://github.com/TheCBaH/ocaml-hf-hub/issues"
 depends: [
   "ocaml" {>= "4.14"}
   "dune" {>= "3.17"}
+  "ppx_expect" {with-test}
   "hf-hub-unix" {= version}
   "safetensors-unix"
   "odoc" {with-doc}

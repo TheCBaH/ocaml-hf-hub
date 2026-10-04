@@ -1,6 +1,25 @@
 (library
- (name hf_hub_test)
- (modules pure_test driver_test safetensors_test)
+ (name hf_hub_pure_test)
+ (modules pure_test)
+ (enabled_if %{lib-available:hf-hub})
+ (inline_tests)
+ (libraries hf-hub)
+ (preprocess
+  (pps ppx_expect)))
+
+(library
+ (name hf_hub_driver_test)
+ (modules driver_test)
+ (enabled_if %{lib-available:hf-hub-unix})
+ (inline_tests)
+ (libraries hf-hub hf-hub-unix unix)
+ (preprocess
+  (pps ppx_expect)))
+
+(library
+ (name hf_hub_safetensors_test)
+ (modules safetensors_test)
+ (enabled_if %{lib-available:hf-hub-safetensors})
  (inline_tests)
  (libraries hf-hub hf-hub-unix hf-hub-safetensors safetensors unix)
  (preprocess
@@ -8,21 +27,25 @@
 
 (test
  (name network_test)
+ (package hf-hub-unix)
  (modules network_test)
  (libraries hf-hub hf-hub-unix))
 
 (library
  (name transport_cases)
+ (enabled_if %{lib-available:hf-hub-unix})
  (modules transport_cases)
  (libraries hf-hub hf-hub-unix unix uri))
 
 (test
  (name lwt_test)
+ (package hf-hub-lwt)
  (modules lwt_test)
  (libraries transport_cases hf-hub-lwt cohttp-lwt-unix lwt.unix))
 
 (test
  (name async_test)
+ (package hf-hub-async)
  (modules async_test)
  (libraries transport_cases hf-hub-async async h2-async))
 
@@ -38,6 +61,8 @@
 
 (rule
  (alias runtest)
+ (enabled_if
+  (and %{lib-available:hf-hub-lwt} %{lib-available:hf-hub-async}))
  (deps
   tls_server.exe
   tls_probe.exe

@@ -11,6 +11,7 @@ depends: [
   "ocaml" {>= "4.14"}
   "dune" {>= "3.17"}
   "cmdliner"
+  "ppx_expect" {with-test}
   "hf-hub" {= version}
   "odoc" {with-doc}
 ]

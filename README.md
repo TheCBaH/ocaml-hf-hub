@@ -60,7 +60,8 @@ as a submodule for the mmap package and its existing tests. The container
 initializes submodules automatically; for an existing clone outside the
 container, run `git submodule update --init --recursive`. The core and HTTP
 packages do not depend on safetensors. The default test suite uses loopback
-servers; the real Hub test is opt-in with `HF_HUB_TEST_NETWORK=1`.
+servers. `make test.network` opts into real Hub downloads through curl, Lwt
+and Async; `HF_HUB_TEST_NETWORK=1` enables just the original curl smoke test.
 
 ## Lwt and Async usage
 
