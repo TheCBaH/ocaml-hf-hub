@@ -1,0 +1,13 @@
+(copy_files ../shared/*.{ml,mli})
+
+(melange.emit
+ (target output)
+ (alias hf-hub-melange)
+ (module_systems
+  (commonjs js)
+  (es6 mjs))
+ (enabled_if
+  (= %{profile} javascript))
+ (libraries hf_hub_mel)
+ (preprocess
+  (pps melange.ppx)))

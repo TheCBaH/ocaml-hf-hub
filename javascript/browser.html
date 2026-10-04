@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OCaml Hugging Face Hub JavaScript example</title>
+<style>
+  body { max-width: 48rem; margin: 3rem auto; padding: 0 1rem; font: 16px system-ui; }
+  label { display: block; margin: 1rem 0; }
+  input, select { display: block; width: 100%; box-sizing: border-box; padding: .5rem; }
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>
+<h1>Hugging Face Hub in OCaml</h1>
+<p>Download through Fetch and keep verified bytes in memory. Choose a backend in the URL:
+  <a href="?backend=jsoo">js_of_ocaml</a> or <a href="?backend=melange">Melange</a>.</p>
+<p>The local example server provides a metadata proxy for the public Hub.
+  Custom endpoints must expose metadata without redirecting HEAD requests and allow CORS.</p>
+<form id="download">
+  <label>Endpoint <input name="endpoint" required></label>
+  <label>Repository <input name="repo" value="timm/mobilenetv2_050.lamb_in1k" required></label>
+  <label>File <input name="filename" value="config.json" required></label>
+  <label>Revision <input name="revision" value="main" required></label>
+  <button disabled>Download</button>
+</form>
+<pre id="result">Loading the OCaml bundle…</pre>
+<script src="fetch.js"></script>
+<script src="browser-host.js"></script>
+<script type="module">
+  const backend = new URLSearchParams(location.search).get('backend') || 'jsoo';
+  const result = document.querySelector('#result');
+  const button = document.querySelector('button');
+  document.querySelector('[name=endpoint]').value = new URL('/hub', location.href).href;
+  try {
+    if (!['jsoo', 'melange'].includes(backend)) throw new Error('backend must be jsoo or melange');
+    await import(`./dist/${backend}.js`);
+    result.textContent = `Ready (${backend})`;
+    button.disabled = false;
+  } catch (error) { result.textContent = error.message; }
+  document.querySelector('form').addEventListener('submit', async event => {
+    event.preventDefault();
+    button.disabled = true;
+    result.textContent = 'Downloading…';
+    try {
+      const blob = await hfHubDownload(Object.fromEntries(new FormData(event.target)));
+      result.textContent = `${blob.path}\ncommit: ${blob.commit}\nbytes: ${blob.bytes.byteLength}\n\n` +
+        (blob.bytes.byteLength < 10000 ? new TextDecoder().decode(blob.bytes) : 'Download complete');
+    } catch (error) { result.textContent = error.message; }
+    finally { button.disabled = false; }
+  });
+</script>

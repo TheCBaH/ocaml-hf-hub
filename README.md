@@ -94,3 +94,20 @@ The blocking adapter calls `Lwt_main.run`; use the asynchronous API within an
 existing Lwt event loop. Cache and SHA256 operations run in each scheduler's
 thread pool. Applications sharing a cache must serialize concurrent writes
 to the same blob, as with the Unix driver. The original CLI still uses curl.
+
+## JavaScript examples
+
+[JavaScript examples](javascript/README.md) compile the existing sans-IO core
+with **js_of_ocaml** and **Melange**. Each backend supports a Node.js CLI with a
+Python-compatible disk cache and a browser Fetch demo with an in-memory cache.
+No Lwt, Async or Unix library is linked into the JavaScript drivers.
+
+```sh
+make build.javascript test.javascript
+node javascript/node.cjs jsoo timm/mobilenetv2_050.lamb_in1k config.json
+node javascript/node.cjs melange timm/mobilenetv2_050.lamb_in1k config.json
+```
+
+The browser demo needs a CORS-enabled metadata endpoint or a same-origin proxy:
+browser Fetch cannot expose the metadata on a Hub HEAD redirect. See the
+examples documentation for prerequisites, browser setup and limitations.

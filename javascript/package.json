@@ -1,0 +1,11 @@
+{
+  "name": "ocaml-hf-hub-javascript-examples",
+  "private": true,
+  "scripts": {
+    "bundle": "node bundle.cjs",
+    "test": "node --test test.cjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

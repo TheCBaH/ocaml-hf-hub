@@ -29,5 +29,7 @@ jobs:
           password: ''
       - name: Build and test
         run: ${{ steps.container.outputs.exec }} make build test test.packages format-check
+      - name: Test JavaScript backends
+        run: ${{ steps.container.outputs.exec }} make test.javascript
       - name: Check generated files
         run: git diff --exit-code
