@@ -1,8 +1,8 @@
 # ocaml-hf-hub
 
-[![build](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/build.yml/badge.svg?branch=devel)](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/build.yml?query=branch%3Adevel)
-[![images](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/images.yml/badge.svg?branch=devel)](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/images.yml?query=branch%3Adevel)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=devel&repo=1403807767)
+[![build](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/build.yml?query=branch%3Amain)
+[![images](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/images.yml/badge.svg?branch=main)](https://github.com/TheCBaH/ocaml-hf-hub/actions/workflows/images.yml?query=branch%3Amain)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=1403807767)
 
 Download files from the Hugging Face Hub into a cache that `huggingface_hub`
 (Python) reads and writes too.
@@ -39,11 +39,11 @@ and refetched once.
 
 ## Development
 
-Open the Codespace above, or clone `devel` and reopen it in a local
+Open the Codespace above, or clone `main` and reopen it in a local
 devcontainer using VS Code's **Dev Containers: Reopen in Container** command:
 
 ```sh
-git clone --branch devel --recurse-submodules https://github.com/TheCBaH/ocaml-hf-hub.git
+git clone --branch main --recurse-submodules https://github.com/TheCBaH/ocaml-hf-hub.git
 cd ocaml-hf-hub
 devcontainer up --workspace-folder .
 devcontainer exec --workspace-folder . make build test format-check
