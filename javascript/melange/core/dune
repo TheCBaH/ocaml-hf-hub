@@ -1,0 +1,9 @@
+; Recompile the original core, with no hand-maintained JavaScript fork.
+
+(copy_files ../../../src/*.{ml,mli})
+
+(library
+ (name hf_hub_mel)
+ (modes melange)
+ (enabled_if
+  (= %{profile} javascript)))

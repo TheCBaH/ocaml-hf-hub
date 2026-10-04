@@ -1,5 +1,6 @@
 (lang dune 3.17)
 (name hf-hub)
+(using melange 0.1)
 (generate_opam_files true)
 (source (github TheCBaH/ocaml-hf-hub))
 (license MIT)

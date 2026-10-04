@@ -1,0 +1,8 @@
+(copy_files ../shared/*.{ml,mli})
+
+(executable
+ (name main)
+ (modes js)
+ (enabled_if
+  (= %{profile} javascript))
+ (libraries hf-hub js_of_ocaml))
