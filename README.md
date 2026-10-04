@@ -49,8 +49,9 @@ devcontainer up --workspace-folder .
 devcontainer exec --workspace-folder . make build test format-check
 ```
 
-The container defaults to OCaml 4.14.3; export `OCAML_VERSION=5.3.0` before
-creating it to select OCaml 5.3. CI builds and tests both versions using
+The container defaults to OCaml 4.14.3; export `OCAML_VERSION=5.5.1` before
+creating it to select OCaml 5.5. CI builds and tests OCaml 4.14.3, 5.3.0 and
+5.5.1 using
 [devcontainer-action](https://github.com/TheCBaH/devcontainer-action).
 The image workflow publishes the default toolchain to GHCR. Dependencies
 are listed in [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json).
