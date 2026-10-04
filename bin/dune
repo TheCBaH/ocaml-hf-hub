@@ -1,0 +1,5 @@
+(executable
+ (name hf_hub_cli)
+ (public_name hf-hub)
+ (package hf-hub-unix)
+ (libraries hf-hub hf-hub-unix cmdliner))

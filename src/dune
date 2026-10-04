@@ -1,0 +1,3 @@
+(library
+ (name hf_hub)
+ (public_name hf-hub))

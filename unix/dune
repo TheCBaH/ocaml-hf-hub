@@ -1,0 +1,4 @@
+(library
+ (name hf_hub_unix)
+ (public_name hf-hub-unix)
+ (libraries hf-hub unix))

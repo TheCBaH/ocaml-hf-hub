@@ -1,0 +1,20 @@
+(lang dune 3.17)
+(name hf-hub)
+(generate_opam_files true)
+(source (github TheCBaH/ocaml-hf-hub))
+(license MIT)
+(authors "Vladimir N. Silyaev")
+(maintainers "Vladimir N. Silyaev")
+(package
+ (name hf-hub)
+ (synopsis "Sans-IO Hugging Face Hub file resolution and huggingface_hub-compatible cache")
+ (description "A download is a step machine that asks its driver for HTTP and cache-store operations; the core does no IO.")
+ (depends (ocaml (>= 4.14)) dune))
+(package
+ (name hf-hub-unix)
+ (synopsis "Blocking Unix driver for hf-hub: curl transport, on-disk cache, CLI")
+ (depends (ocaml (>= 4.14)) dune cmdliner (hf-hub (= :version))))
+(package
+ (name hf-hub-safetensors)
+ (synopsis "Open a Hub safetensors checkpoint as a read-only mmap")
+ (depends (ocaml (>= 4.14)) dune (hf-hub-unix (= :version)) safetensors-unix))

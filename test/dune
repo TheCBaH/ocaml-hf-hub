@@ -1,0 +1,12 @@
+(library
+ (name hf_hub_test)
+ (modules :standard \ network_test)
+ (inline_tests)
+ (libraries hf-hub hf-hub-unix hf-hub-safetensors safetensors unix)
+ (preprocess
+  (pps ppx_expect)))
+
+(test
+ (name network_test)
+ (modules network_test)
+ (libraries hf-hub hf-hub-unix))

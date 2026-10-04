@@ -1,0 +1,4 @@
+; [vendor/] is a local, untracked link to an ocaml-safetensors checkout, used
+; until the bigstring/mmap reader is available as an opam package.
+
+(vendored_dirs vendor)

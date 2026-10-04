@@ -1,0 +1,4 @@
+(library
+ (name hf_hub_safetensors)
+ (public_name hf-hub-safetensors)
+ (libraries hf-hub hf-hub-unix safetensors safetensors-unix))
