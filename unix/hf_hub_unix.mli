@@ -20,6 +20,13 @@ type hasher = string -> (string, string) result
 val curl : Hf_hub.Env.t -> http
 val sha256sum : hasher
 
+val prepare_http : Hf_hub.Env.t -> Hf_hub.Request.t -> unit
+(** Create a GET sink's parent directory. *)
+
+val store :
+  hasher:hasher -> Hf_hub.Env.t -> Hf_hub.Store.Op.t -> Hf_hub.Store.reply
+(** Filesystem operations shared by Unix drivers. *)
+
 val run :
   ?http:http ->
   ?hasher:hasher ->

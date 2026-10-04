@@ -1,6 +1,6 @@
 (library
  (name hf_hub_test)
- (modules :standard \ network_test)
+ (modules pure_test driver_test safetensors_test)
  (inline_tests)
  (libraries hf-hub hf-hub-unix hf-hub-safetensors safetensors unix)
  (preprocess
@@ -10,3 +10,39 @@
  (name network_test)
  (modules network_test)
  (libraries hf-hub hf-hub-unix))
+
+(library
+ (name transport_cases)
+ (modules transport_cases)
+ (libraries hf-hub hf-hub-unix unix uri))
+
+(test
+ (name lwt_test)
+ (modules lwt_test)
+ (libraries transport_cases hf-hub-lwt cohttp-lwt-unix lwt.unix))
+
+(test
+ (name async_test)
+ (modules async_test)
+ (libraries transport_cases hf-hub-async async h2-async))
+
+(executable
+ (name tls_server)
+ (modules tls_server)
+ (libraries h2-lwt-unix gluten-lwt-unix tls-lwt lwt.unix))
+
+(executable
+ (name tls_probe)
+ (modules tls_probe)
+ (libraries transport_cases hf-hub-lwt hf-hub-async async lwt.unix))
+
+(rule
+ (alias runtest)
+ (deps
+  tls_server.exe
+  tls_probe.exe
+  tls_test.sh
+  fixtures/server.pem
+  fixtures/server.key)
+ (action
+  (run bash %{dep:tls_test.sh})))

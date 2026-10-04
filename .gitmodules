@@ -1,0 +1,3 @@
+[submodule "vendor/ocaml-safetensors"]
+	path = vendor/ocaml-safetensors
+	url = https://github.com/TheCBaH/ocaml-safetensors.git

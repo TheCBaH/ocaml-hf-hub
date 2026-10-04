@@ -1,0 +1,14 @@
+(library
+ (name hf_hub_async)
+ (public_name hf-hub-async)
+ (libraries
+  hf-hub
+  hf-hub-unix
+  async
+  bigstringaf
+  ca-certs
+  core
+  domain-name
+  h2-async
+  tls-async
+  uri))

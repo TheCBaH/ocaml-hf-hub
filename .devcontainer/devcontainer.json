@@ -1,0 +1,28 @@
+{
+  "name": "ocaml-hf-hub",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "vscode",
+      "upgradePackages": false
+    },
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/thecbah/ocaml-features/ocaml:1": {
+      "version": "${localEnv:OCAML_VERSION:4.14.3}",
+      "base-packages": "",
+      "packages": "async bytesrw#0.3.0 ca-certs cmdliner cohttp-lwt-unix#6.3.0 dune#3.24.2 h2-async#0.13.0 h2-lwt-unix#0.13.0 jsont#0.4.0 ocaml-lsp-server ocamlformat#0.29.0 ppx_expect tls-async tls-lwt"
+    }
+  },
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ocamllabs.ocaml-platform"
+      ]
+    }
+  },
+  "postCreateCommand": "git submodule update --init --recursive --depth 1",
+  "waitFor": "postCreateCommand"
+}

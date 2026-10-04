@@ -1,0 +1,12 @@
+(library
+ (name hf_hub_lwt)
+ (public_name hf-hub-lwt)
+ (libraries
+  hf-hub
+  hf-hub-unix
+  cohttp-lwt-unix
+  conduit-lwt
+  conduit-lwt-unix
+  lwt.unix
+  tls-lwt
+  uri))

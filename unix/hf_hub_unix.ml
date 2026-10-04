@@ -300,18 +300,20 @@ let store ~(hasher : hasher) (env : Hf_hub.Env.t) (op : Store.Op.t) :
       Store_error (Printf.sprintf "%s(%s): %s" call arg (Unix.error_message e))
   | Sys_error m -> Store_error m
 
+let prepare_http (env : Hf_hub.Env.t) = function
+  | Request.Get { sink; _ } ->
+      mkdir_p
+        (Filename.dirname
+           (Cache_layout.incomplete_path ~root:env.cache_dir sink.repo
+              ~etag:sink.etag))
+  | Head _ -> ()
+
 let run ?http ?(hasher = sha256sum) env step =
   let http = match http with Some h -> h | None -> curl env in
   let rec go : Download.step -> _ = function
     | Done r -> r
     | Need_http (req, k) ->
-        (match req with
-        | Get { sink; _ } ->
-            mkdir_p
-              (Filename.dirname
-                 (Cache_layout.incomplete_path ~root:env.cache_dir sink.repo
-                    ~etag:sink.etag))
-        | Head _ -> ());
+        prepare_http env req;
         go (k (http req))
     | Need_store (op, k) -> go (k (store ~hasher env op))
   in

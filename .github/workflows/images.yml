@@ -1,0 +1,24 @@
+name: images
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: images-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  devcontainer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: TheCBaH/devcontainer-action/devcontainer@v1
+        id: container
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Smoke test
+        run: ${{ steps.container.outputs.exec }} make build

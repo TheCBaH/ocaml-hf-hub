@@ -1,0 +1,33 @@
+name: build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        ocaml: ['4.14.3', '5.3.0']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: TheCBaH/devcontainer-action/devcontainer@v1
+        id: container
+        env:
+          OCAML_VERSION: ${{ matrix.ocaml }}
+        with:
+          variant: ${{ matrix.ocaml }}
+          username: ${{ github.actor }}
+          password: ''
+      - name: Build and test
+        run: ${{ steps.container.outputs.exec }} make build test format-check
+      - name: Check generated files
+        run: git diff --exit-code

@@ -1,3 +1,2 @@
 _build/
-# Local development link to a checkout of ocaml-safetensors (see dune)
-vendor/
+_opam/
