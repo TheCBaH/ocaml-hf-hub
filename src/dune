@@ -1,3 +1,4 @@
 (library
  (name hf_hub)
- (public_name hf-hub))
+ (public_name hf-hub)
+ (private_modules metadata))

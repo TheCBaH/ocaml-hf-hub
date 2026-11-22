@@ -104,7 +104,7 @@ let commit = "0123456789abcdef0123456789abcdef01234567"
 let received status headers = { Response.Received.status; headers }
 
 let show label r =
-  match Metadata.of_response "u" r with
+  match Hf_hub.Private.Metadata.of_response "u" r with
   | Ok m ->
       Printf.printf "%s: commit=%s etag=%s sha256=%s size=%s\n" label
         (String.sub m.commit 0 7) m.etag

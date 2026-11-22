@@ -1,0 +1,6 @@
+# CONFIG PROVIDER
+install hf-hub
+install hf-hub-unix
+install hf-hub-lwt
+install hf-hub-async
+install hf-hub-safetensors
